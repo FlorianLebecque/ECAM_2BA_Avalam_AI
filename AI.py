@@ -10,6 +10,7 @@ class player:
         strList_players = body_json["players"]
         str_selfPlayer = body_json["you"]
         
+        #find witch player we are, so we are sure to play at least correctly
         if strList_players[0] == str_selfPlayer:
             self.int_playerNbr = 0
             self.int_opposentNbr = 1
@@ -17,8 +18,43 @@ class player:
             self.int_playerNbr = 1
             self.int_opposentNbr = 0
         
+        print("-------------------------------------------------------------------------")
+        print("   | I am player :",self.int_playerNbr)
+
         self.List2D_board = body_json["game"]
 
+        #function whitch optimise the best option possible, int_FirstIs represent if the "From" key is ennemy or our (0 = our | 1 = ennemy)
+    def _opti_move(self,dico_TowerList,int_FirstIs):
+         #let optimise the number of isolated tower
+            int_NbrIso = -100
+
+            int2D_To = []     
+            int2D_From = []
+
+            for dico_tower in dico_TowerList["towers"]: #for every final position               |dico (From = (i,j) , to: [(a,b),(c,d),(e,f),(g,h)])
+                for tuple_org in dico_tower["to"]:      #for every origine position for attack  |tuple (a,b)
+                    
+                    List2D_boardTemp = af.List2D_CopyBoard(self.List2D_board)                       #we copy the board
+                    List2D_boardTemp = af.applyMove(List2D_boardTemp,tuple_org,dico_tower["from"])  #we apply the move
+
+                    int_isoScore = af.int_getScore(List2D_boardTemp,self.int_playerNbr,self.int_opposentNbr)   #we give a score to the board
+                    
+                    #we keep track of witch move give a higher score
+                    if(int_NbrIso < int_isoScore):
+                        int_NbrIso = int_isoScore
+                        #we need to be sure to move the tower in the correct order
+                        if int_FirstIs == 0:    #here the enemy tower is in the "To" key
+                            int2D_From = dico_tower["from"]
+                            int2D_To = tuple_org
+                        else:                   #here the enemy tower is in the "from" key
+                            int2D_From = tuple_org
+                            int2D_To = dico_tower["from"]
+
+            return (int2D_From,int2D_To)
+
+    def _msg(self,tuple_move):
+        print("   |",tuple_move,af.int_getPieces(self.List2D_board,tuple_move[0][0],tuple_move[0][1]),af.int_getPieces(self.List2D_board,tuple_move[1][0],tuple_move[1][1]))
+        
     def play(self):
         dico_move = {
             "move" :{
@@ -30,161 +66,40 @@ class player:
 
         int_nbrTower = af.countTower(self.List2D_board,self.int_playerNbr)
         int_notMove = af.int_CountIsolated(self.List2D_board,self.int_playerNbr,self.int_opposentNbr)
-        print("nbr of tower : ",int_nbrTower," nbr of not move : ",int_notMove)
+        print("   | Nbr of tower : ",int_nbrTower," nbr of not move : ",int_notMove)
 
-        #First try to steal a tower of four of the adverair
-        dico_towerOfFourOP = af.dico_FindTowerFour(self.List2D_board,self.int_opposentNbr,self.int_playerNbr) #every tower of four of the opposant
-        if len(dico_towerOfFourOP["towers"])>0:
-            #let optimise the number of isolated tower
-            int_NbrIso = -100
+        #array with all the strategie : (Min origin tower,min surrounding tower, inverted position 0 or 1) Origin tower, surrounded by tower, message to send
+        #we set to inverted when the opposent tower is the origin tower so we move from the surronding to the origin and not the opposite
+        table_strat = [
+            [(4,1,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 4 ;)"],                         #Enemy tower of 4 surrond by my tower of 1
+            [(4,1,0),self.int_playerNbr,self.int_opposentNbr,"J'ai fait une tour de 5 :p"],                                 #my tower of 4 surrond by his tower of 1
+            [(3,2,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 3 pour en faire une de 5 ;)"],  #same with 3 and 2
+            [(3,2,0),self.int_playerNbr,self.int_opposentNbr,"J'ai sécuriser une tour de 5 :O"],                            #same but mine
+            [(2,3,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 2 saperlipopette 5 ;)"],        #with 2 and 3
+            [(2,3,0),self.int_playerNbr,self.int_opposentNbr,"J'ai refait une tour de 5 O_o"],                              #and again but mine
+            [(1,1,1),self.int_opposentNbr,self.int_playerNbr,"Je t'ai pris une tour :3"],                                   #his tower surround by mine
+            [(1,1,1),self.int_opposentNbr,self.int_opposentNbr,"J'ai combiné tes tours :D"],                                #his tower surrond by his tower
+            [(1,1,0),self.int_playerNbr,self.int_playerNbr,"J'ai du combiner une tour :/"]                                  #my tower surrond by mine
+        ]
 
-            int2D_To = dico_towerOfFourOP["towers"][0]["from"]        #enemy tower
-            int2D_From = dico_towerOfFourOP["towers"][0]["to"][0]     #our tower
-
-            for dico_tower in dico_towerOfFourOP["towers"]:   #for every final position               |dico (From = (i,j) , to: [(a,b),(c,d),(e,f),(g,h)])
-                for tuple_org in dico_tower["to"]:           #for every origine position for attack  |tuple (a,b)
-                    
-                    List2D_boardTemp = af.List2D_CopyBoard(self.List2D_board)
-                    List2D_boardTemp = af.applyMove(List2D_boardTemp,tuple_org,dico_tower["from"])
-
-                    int_isoScore = af.int_CountIsolated(List2D_boardTemp,self.int_playerNbr,self.int_opposentNbr)
-                    
-                    if(int_NbrIso < int_isoScore):
-                        int_NbrIso = int_isoScore
-                        int2D_From = tuple_org
-                        int2D_To = dico_tower["from"]
-
-            dico_move["move"]["from"] = int2D_From
-            dico_move["move"]["to"] = int2D_To
-            dico_move["message"] = "Haha je t'ai pris une tour de 4 ;) "
-
-            print(int2D_From,af.int_getPieces(self.List2D_board,int2D_From[0],int2D_From[1]),int2D_To,af.int_getPieces(self.List2D_board,int2D_To[0],int2D_To[1]))
-
-            return dico_move
-
-        #then let's try to save our tower of four
-        dico_towerOfFourPL = af.dico_FindTowerFour(self.List2D_board,self.int_playerNbr,self.int_opposentNbr) #every tower of four with our tower next to it
-        if len(dico_towerOfFourPL["towers"])>0:
-            int_NbrIso = -100
-
-            int2D_From = dico_towerOfFourPL["towers"][0]["from"]
-            int2D_To = dico_towerOfFourPL["towers"][0]["to"][0]
-
-            for dico_tower in dico_towerOfFourPL["towers"]:   #for every final position               |dico (From = (i,j) , to: [(a,b),(c,d),(e,f),(g,h)])
-                for tuple_org in dico_tower["to"]:           #for every origine position for attack  |tuple (a,b)
-                    
-                    List2D_boardTemp = af.List2D_CopyBoard(self.List2D_board)
-                    List2D_boardTemp = af.applyMove(List2D_boardTemp,tuple_org,dico_tower["from"])
-
-                    int_isoScore = af.int_CountIsolated(List2D_boardTemp,self.int_playerNbr,self.int_opposentNbr)
-                    
-                    if(int_NbrIso < int_isoScore):
-                        int_NbrIso = int_isoScore
-                        int2D_From = dico_tower["from"]
-                        int2D_To = tuple_org
-
-            dico_move["move"]["from"] = int2D_From
-            dico_move["move"]["to"] = int2D_To
-
-            dico_move["message"] = "J'ai fait une tour de 5 :p "
-
-            print(int2D_From,af.int_getPieces(self.List2D_board,int2D_From[0],int2D_From[1]),int2D_To,af.int_getPieces(self.List2D_board,int2D_To[0],int2D_To[1]))
-
-            return dico_move
-        
-        #now let's juste make more tower
-        #we first need to find all enemy tower that we can take
-        #We also need to isolate our tower.
-        dico_EnnemyTower = af.dico_FindTower(self.List2D_board,self.int_opposentNbr,self.int_playerNbr) #every tower of our enemy with tower of ours next to it
-        if len(dico_EnnemyTower["towers"])>0:
+        #Here we do all the strategies in the list, we prioritize the first one
+        for List_strategie in table_strat:
             
-            #let optimise the number of isolated tower of our
-            int_NbrIso = -100
+            tuple_crit = List_strategie[0]
+            dico_TowerList = af.dico_FindXTowerX(self.List2D_board,tuple_crit[0],tuple_crit[1],List_strategie[1],List_strategie[2]) #get the data base on the strategie criteria
 
-            int2D_To = dico_EnnemyTower["towers"][0]["from"]        #enemy tower
-            int2D_From = dico_EnnemyTower["towers"][0]["to"][0]     #our tower
+            if len(dico_TowerList["towers"]) > 0:
+                print("   |",List_strategie)
 
-            for dico_tower in dico_EnnemyTower["towers"]:   #for every final position               |dico (From = (i,j) , to: [(a,b),(c,d),(e,f),(g,h)])
-                for tuple_org in dico_tower["to"]:           #for every origine position for attack  |tuple (a,b)
-                    
-                    List2D_boardTemp = af.List2D_CopyBoard(self.List2D_board)
-                    List2D_boardTemp = af.applyMove(List2D_boardTemp,tuple_org,dico_tower["from"])
+                tuple_move = self._opti_move(dico_TowerList,tuple_crit[2])   #optimise the move taking in account if we need to invert the position
 
-                    int_isoScore = af.int_CountIsolated(List2D_boardTemp,self.int_playerNbr,self.int_opposentNbr)
-                    
-                    if(int_NbrIso < int_isoScore):
-                        int_NbrIso = int_isoScore
-                        int2D_From = tuple_org
-                        int2D_To = dico_tower["from"]
+                #We create the move json
+                dico_move["move"]["from"] = tuple_move[0]
+                dico_move["move"]["to"] = tuple_move[1]
+                dico_move["message"] = List_strategie[3]
 
-            print(int_NbrIso)
-            dico_move["move"]["from"] = int2D_From
-            dico_move["move"]["to"] = int2D_To
-            dico_move["message"] = "Je t'ai pris une tour :3 "
+                self._msg(tuple_move)
+                print("-------------------------------------------------------------------------")
 
-            print(int2D_From,af.int_getPieces(self.List2D_board,int2D_From[0],int2D_From[1]),int2D_To,af.int_getPieces(self.List2D_board,int2D_To[0],int2D_To[1]))
-
-            return dico_move
-
-        #We may have the possibilities to take opposant tower with his tower
-        dico_myTower = af.dico_FindTower(self.List2D_board,self.int_opposentNbr,self.int_opposentNbr) #every tower of our enemy with tower of ours next to it
-        if len(dico_myTower["towers"])>0:
-
-            #let optimise the number of isolated tower of our
-            int_NbrIso = 100
-
-            int2D_To = dico_myTower["towers"][0]["from"]        #enemy tower
-            int2D_From = dico_myTower["towers"][0]["to"][0]     #our tower
-
-            for dico_tower in dico_myTower["towers"]:   #for every final position               |dico (From = (i,j) , to: [(a,b),(c,d),(e,f),(g,h)])
-                for tuple_org in dico_tower["to"]:           #for every origine position for attack  |tuple (a,b)
-                    
-                    List2D_boardTemp = af.List2D_CopyBoard(self.List2D_board)
-                    List2D_boardTemp = af.applyMove(List2D_boardTemp,tuple_org,dico_tower["from"])
-
-                    int_isoScore = af.int_CountIsolated(List2D_boardTemp,self.int_opposentNbr,self.int_playerNbr)
-                    
-                    if(int_NbrIso > int_isoScore):
-                        int_NbrIso = int_isoScore
-                        int2D_From = tuple_org
-                        int2D_To = dico_tower["from"]
-
-            print(int_NbrIso)
-            dico_move["move"]["from"] = int2D_From
-            dico_move["move"]["to"] = int2D_To
-            
-            dico_move["message"] = "J'ai combiné tes tours :D "
-
-            print(int2D_From,af.int_getPieces(self.List2D_board,int2D_From[0],int2D_From[1]),int2D_To,af.int_getPieces(self.List2D_board,int2D_To[0],int2D_To[1]))
-
-            return dico_move
-
-        #now we juste have to take our own tower
-        dico_myTower = af.dico_FindTower(self.List2D_board,self.int_playerNbr,self.int_playerNbr) #Our towers with our towers next to it
-        if len(dico_myTower["towers"])>0:
-            #let optimise the number of isolated tower of our
-            int_NbrIso = -100
-
-            int2D_To = dico_myTower["towers"][0]["from"]        #enemy tower
-            int2D_From = dico_myTower["towers"][0]["to"][0]     #our tower
-
-            for dico_tower in dico_myTower["towers"]:   #for every final position               |dico (From = (i,j) , to: [(a,b),(c,d),(e,f),(g,h)])
-                for tuple_org in dico_tower["to"]:           #for every origine position for attack  |tuple (a,b)
-                    
-                    List2D_boardTemp = af.List2D_CopyBoard(self.List2D_board)
-                    List2D_boardTemp = af.applyMove(List2D_boardTemp,tuple_org,dico_tower["from"])
-
-                    int_isoScore = af.int_CountIsolated(List2D_boardTemp,self.int_playerNbr,self.int_opposentNbr)
-                    
-                    if(int_NbrIso < int_isoScore):
-                        int_NbrIso = int_isoScore
-                        int2D_From = tuple_org
-                        int2D_To = dico_tower["from"]
-
-            dico_move["move"]["from"] = int2D_From
-            dico_move["move"]["to"] = int2D_To
-            dico_move["message"] = "J'ai du combiner une tour :/ "
-
-            print(int2D_From,af.int_getPieces(self.List2D_board,int2D_From[0],int2D_From[1]),int2D_To,af.int_getPieces(self.List2D_board,int2D_To[0],int2D_To[1]))
-
-            return dico_move
+                #And here we go
+                return dico_move

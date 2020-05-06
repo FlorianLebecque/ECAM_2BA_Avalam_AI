@@ -1,6 +1,7 @@
 import cherrypy
 import sys
 import AI
+import ConnectAI as CA
 
 class Server:
 
@@ -19,8 +20,10 @@ class Server:
 
         body = cherrypy.request.json
         
-        p = AI.player(body)
 
+        #create a player
+        p = AI.player(body)
+        #play
         mov = p.play()
 
         return mov
@@ -30,10 +33,19 @@ class Server:
         return "pong"
 
 if __name__ == "__main__":
+
     if len(sys.argv) > 1:
         port=int(sys.argv[1])
     else:
         port=8080
 
+        #inscription au serveur
+    msg = '{"matricules": ["'+str(port)+'"],"port":'+str(port)+',"name": "Lbcqu Florian : '+str(port)+'"}'
+    addr = "192.168.1.205"
+    CA.EchoClient(msg).run(addr, 5001)
+    print(msg)
+    print("connected")
+
+        #demarre le serveur
     cherrypy.config.update({'server.socket_host': '0.0.0.0', 'server.socket_port': port})
     cherrypy.quickstart(Server())
