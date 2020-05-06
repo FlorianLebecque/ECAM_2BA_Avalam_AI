@@ -22,11 +22,11 @@ class EchoClient:
 
 
 
-msg = '{"matricules": ["18040"],"port": 8080,"name": "Sara Connor"}'
+msg = '{"matricules": ["18024"],"port": 8080,"name": "Lbcqu Florian"}'
 
  
-addr = "192.168.1.205"
+addr = "127.0.0.1"
 port = 5001
 
 EchoClient(msg).run(addr, port)
-print("ok");
+print("Connected")
