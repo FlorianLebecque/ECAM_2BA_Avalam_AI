@@ -73,10 +73,10 @@ class player:
         table_strat = [
             [(4,1,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 4 ;)"],                         #Enemy tower of 4 surrond by my tower of 1
             [(4,1,0),self.int_playerNbr,self.int_opposentNbr,"J'ai fait une tour de 5 :p"],                                 #my tower of 4 surrond by his tower of 1
-            [(3,2,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 3 pour en faire une de 5 ;)"],  #same with 3 and 2
-            [(3,2,0),self.int_playerNbr,self.int_opposentNbr,"J'ai sécuriser une tour de 5 :O"],                            #same but mine
-            [(2,3,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 2 saperlipopette 5 ;)"],        #with 2 and 3
-            [(2,3,0),self.int_playerNbr,self.int_opposentNbr,"J'ai refait une tour de 5 O_o"],                              #and again but mine
+            #[(3,2,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 3 pour en faire une de 5 ;)"],  #same with 3 and 2
+            #[(3,2,0),self.int_playerNbr,self.int_opposentNbr,"J'ai sécuriser une tour de 5 :O"],                            #same but mine
+            #[(2,3,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 2 saperlipopette 5 ;)"],        #with 2 and 3
+            #[(2,3,0),self.int_playerNbr,self.int_opposentNbr,"J'ai refait une tour de 5 O_o"],                              #and again but mine
             [(1,1,1),self.int_opposentNbr,self.int_playerNbr,"Je t'ai pris une tour :3"],                                   #his tower surround by mine
             [(1,1,1),self.int_opposentNbr,self.int_opposentNbr,"J'ai combiné tes tours :D"],                                #his tower surrond by his tower
             [(1,1,0),self.int_playerNbr,self.int_playerNbr,"J'ai du combiner une tour :/"]                                  #my tower surrond by mine
