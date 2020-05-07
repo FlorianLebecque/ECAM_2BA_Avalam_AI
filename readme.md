@@ -51,13 +51,13 @@ table_strat = [
 
 ## Démarrer
 
-l'IAL'IA est un serveur web basé sur ce repos [AIGameRunner](https://github.com/ECAM-Brussels/AIGameRunner)
+L'IA est un serveur web basé sur ce repos [AIGameRunner](https://github.com/ECAM-Brussels/AIGameRunner)
 
 - Il faut avoir la librairie Cherrypy
-- Lancer RunAi.py avec en argument le port 
+- Lancer RunAI.py avec en argument le port 
 
-Le fichier RunAi.py gère aussi l'inscription aux serveur de jeux
+Le fichier RunAI.py gère aussi l'inscription aux serveur de jeux
 
 ``` 
-py RunAi.Py 8080
+py RunAI.Py 8080
 ```
