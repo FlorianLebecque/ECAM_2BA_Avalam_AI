@@ -2,7 +2,7 @@
 
 18024 : Lebecque Florian
 
-Intéligence artificielle créée dans le cadre du cours d'informatique à l'ecam en bac2 
+Intéligence artificielle créée dans le cadre du cours d'informatique à l'ecam en bac2
 
 ## stratégie
 
@@ -27,6 +27,8 @@ Le score est attribué de cette façon : NTI²-NEI
 l'IAL'IA est un serveur web basé sur ce repos [AIGameRunner](https://github.com/ECAM-Brussels/AIGameRunner)
 
 - Il faut avoir la librairie Cherrypy
-- Lancer Run Ai.py avec en argument le port 
+- Lancer RunAi.py avec en argument le port 
 
-> ex : Run Ai.Py 8080
+Le fichier RunAi.py gère aussi l'inscription aux serveur de jeux
+
+> ex : RunAi.Py 8080
