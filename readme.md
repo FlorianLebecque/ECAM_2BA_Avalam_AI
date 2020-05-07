@@ -34,7 +34,7 @@ Les stratégies possible sont modifiable à souhait. Elles sont stockées dans u
 * Le troisème paramètre indique les tours qui sont adjacentes à la tour d'origine
 * Le quatrième est just un message
 
-```
+```python
 table_strat = [
             [(4,1,1),self.int_opposentNbr,self.int_playerNbr,"Haha je t'ai pris une tour de 4 ;)"],                         #Enemy tower of 4 surrond by my tower of 1
             [(4,1,0),self.int_playerNbr,self.int_opposentNbr,"J'ai fait une tour de 5 :p"],                                 #my tower of 4 surrond by his tower of 1
