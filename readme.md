@@ -1,5 +1,7 @@
 # Avalam AI
 
+18024 : Lebecque Florian
+
 Intéligence artificielle créée dans le cadre du cours d'informatique à l'ecam en bac2 
 
 ## stratégie
