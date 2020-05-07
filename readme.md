@@ -28,8 +28,8 @@ Le score est attribué de cette façon : NTI²-NEI
 
 Les stratégies possible sont modifiable à souhait. Elles sont stockées dans une list et executé dans l'ordre de la list
 * Le premier élément est un Tuple, il contient les informations sur la recherche
-    (4,1,1) : cela indique qu'on veut des tours de 4 entourés de tours de 1. Le dernier 1 indique qu'on inverse le mouvement de la tours "To" vers la tour "From"
-    (1,1,0) : cela indique qu'on veut des tours de 1 entourés de tours de 1. Ici on inverse pas le mouvement
+  * (4,1,1) : cela indique qu'on veut des tours de 4 entourés de tours de 1. Le dernier 1 indique qu'on inverse le mouvement de la tours "To" vers la tour "From"
+  * (1,1,0) : cela indique qu'on veut des tours de 1 entourés de tours de 1. Ici on inverse pas le mouvement
 * Le deuxième paramètre indique les tours d'origine
 * Le troisème paramètre indique les tours qui sont adjacentes à la tour d'origine
 * Le quatrième est just un message
