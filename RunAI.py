@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
         #inscription au serveur
     msg = '{"matricules": ["'+str(port)+'"],"port":'+str(port)+',"name": "Lbcqu Florian : '+str(port)+'"}'
-    addr = "192.168.1.205"
+    addr = "127.0.0.1"
     CA.EchoClient(msg).run(addr, 5001)
     print(msg)
     print("connected")
